@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/totherme/unstructured"
 )
@@ -92,16 +93,12 @@ func (configGetter OSConfigGetter) findCloudFoundryConfigFor(deploymentName stri
 	if err != nil {
 		panic("Error parsing manifest")
 	}
-	password, err := user.GetByPointer("/password")
-	if err != nil {
-		panic("Error parsing manifest")
-	}
 
 	return CloudFoundryConfig{
 		Name:          deploymentName,
 		ApiUrl:        fmt.Sprintf("https://api.%s", systemDomain.UnsafeStringValue()),
 		AdminUsername: username.UnsafeStringValue(),
-		AdminPassword: password.UnsafeStringValue(),
+		AdminPassword: os.Getenv("CF_ADMIN_PASSWORD"),
 	}
 }
 
